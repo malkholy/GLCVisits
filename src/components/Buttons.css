@@ -1,0 +1,14 @@
+.btn {
+  height: 40px; border-radius: 12px;
+  padding: 0 16px; font-weight: 700;
+  font-size: 13px; border: 1px solid transparent;
+  white-space: nowrap; display: inline-flex;
+  align-items: center; gap: 6px; transition: .15s ease;
+}
+.btn-primary  { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-ghost    { background: #fff; color: var(--text); border-color: var(--line); }
+.btn-ghost:hover { background: #f9f9f9; }
+.btn-danger   { background: var(--red-soft); color: var(--red); border-color: #fecaca; }
+.btn-success  { background: var(--green-soft); color: var(--green); border-color: #a7f3d0; }
+.btn-sm { height: 32px; padding: 0 12px; font-size: 12px; border-radius: 9px; }
