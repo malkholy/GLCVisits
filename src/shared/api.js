@@ -1,23 +1,69 @@
-import { API_URL, SP_NAME } from './constants'
+export {
+  default,
+  callApi,
+  normalizeApiResponse,
+  executeOperation,
+  getVisitList,
+  getVisitDetails,
+  addVisit,
+  editVisit,
+  startVisit,
+  checkOutVisit,
+  completeVisit,
+  cancelVisit,
+  missVisit,
+  approveVisit,
+  getErpCustomers,
+  getShowRooms,
+  getProjectMaster,
+  getNearestTarget,
+  getTargets,
+  getTargetTypes,
+  getPurposes,
+  addTarget,
+  editTarget,
+  deleteTarget,
+  getUsers,
+  addUser,
+  editUser,
+  deleteUser,
+  getTeams,
+  addTeam,
+  editTeam,
+  deleteTeam,
+  getPermissions,
+  addPermission,
+  editPermission,
+  deletePermission,
+  getSurveyTemplates,
+  getSurveyTemplateDetails,
+  saveSurveyTemplate,
+  deleteSurveyTemplate,
+  submitSurvey,
+  getSurveyAnswers,
+  getSalespersons,
+  getMerchantUsers,
+  getDashboardKPI,
+  getSalespersonKPI,
+  getMerchantKPI,
+  getCompetitorKPI,
+  saveVisitAttachment,
+  deleteVisitAttachment,
+  saveVisitFollowUpTask,
+  deleteVisitFollowUpTask,
+  saveVisitCompetitorInfo,
+  deleteVisitCompetitorInfo,
+  saveVisitDisplayInspection,
+  getSurveyDashboardData,
+} from '../services/API'
 
-// Will be activated once API_URL is set
+import { executeOperation } from '../services/API'
+
+// Backwards compatibility with any components calling the generic apiCall
 export async function apiCall(operation, lineData = {}, user = 'admin') {
-  if (!API_URL) {
-    console.warn('[apiCall] API not configured yet. Operation:', operation)
-    return { state: 0, data: [] }
-  }
-
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      Sp_Name: SP_NAME,
-      Operation: operation,
-      LineData: JSON.stringify(lineData),
-      User: user,
-    }),
+  return executeOperation(operation, {
+    LineData: JSON.stringify(lineData),
+    User: user,
   })
-
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  return await res.json()
 }
+

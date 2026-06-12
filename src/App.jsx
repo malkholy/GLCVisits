@@ -6,6 +6,11 @@ import VisitNew     from './pages/visits/VisitNew'
 import VisitDetails from './pages/visits/VisitDetails'
 import Targets      from './pages/targets/Targets'
 import Settings     from './pages/settings/Settings'
+import UserMaster   from './pages/settings/UserMaster'
+import TeamMaster   from './pages/settings/TeamMaster'
+import UserPermissions from './pages/settings/UserPermissions'
+import SurveyBuilder   from './pages/settings/SurveyBuilder'
+import MergedSurveyDashboard from './pages/visits/MergedSurveyDashboard'
 import './App.css'
 
 export default function App() {
@@ -20,7 +25,13 @@ export default function App() {
             <Route path="/visits/new"     element={<VisitNew/>}/>
             <Route path="/visits/:id"     element={<VisitDetails/>}/>
             <Route path="/targets"        element={<Targets/>}/>
+            <Route path="/reports/dashboard" element={<MergedSurveyDashboard/>}/>
             <Route path="/settings"       element={<Settings/>}/>
+            <Route path="/settings/users" element={<UserMaster/>}/>
+
+            <Route path="/settings/teams" element={<TeamMaster/>}/>
+            <Route path="/settings/permissions" element={<UserPermissions/>}/>
+            <Route path="/settings/surveys"     element={<SurveyBuilder/>}/>
           </Routes>
         </main>
       </div>

@@ -1,80 +1,86 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { mockVisits, mockStatuses, mockTargetTypes } from '../../mock/mockData'
+import { mockVisits } from '../../mock/mockData'
 import Topbar from '../../components/Topbar'
 import StatusBadge from '../../components/StatusBadge'
+import DataGrid from '../../components/DataGrid'
 import { fmtDate } from '../../shared/utils'
-import '../../components/Buttons.css'
-import '../visits/Dashboard.css'
+import { getVisitList } from '../../shared/api'
+import { API_URL } from '../../shared/constants'
 
 export default function VisitList() {
   const navigate = useNavigate()
-  const [status, setStatus]   = useState('')
-  const [type,   setType]     = useState('')
-  const [search, setSearch]   = useState('')
+  const [visits, setVisits] = useState([])
+  const [loading, setLoading] = useState(false)
 
-  const filtered = mockVisits.filter(v =>
-    (!status || v.StatusCode === status) &&
-    (!type   || v.TargetTypeName === type) &&
-    (!search || v.TargetName.toLowerCase().includes(search.toLowerCase()) ||
-                v.VisitNo.toLowerCase().includes(search.toLowerCase()))
-  )
+  const loadVisits = async () => {
+    if (!API_URL) {
+      setVisits(mockVisits)
+      return
+    }
+    setLoading(true)
+    try {
+      const res = await getVisitList()
+      if (res && res.isSuccess) {
+        setVisits(res.list0 || [])
+      } else {
+        console.warn('API success state was false, falling back to mock data.')
+        setVisits(mockVisits)
+      }
+    } catch (err) {
+      console.error('Failed to fetch visits from API, falling back to mock data:', err)
+      setVisits(mockVisits)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadVisits()
+  }, [])
+
+  const columns = [
+    { key: 'VisitNo', label: 'Visit No', render: (val) => <span className="mono">{val}</span> },
+    { key: 'TargetName', label: 'Target', render: (val) => <strong>{val}</strong> },
+    { key: 'Area', label: 'Governorate / Area', render: (_, row) => `${row.Governorate} / ${row.Area}` },
+    { key: 'TargetTypeName', label: 'Type' },
+    { key: 'PurposeName', label: 'Purpose' },
+    { key: 'VisitDate', label: 'Date', render: (val) => fmtDate(val) },
+    { key: 'SalespersonName', label: 'Salesperson' },
+    { key: 'StatusCode', label: 'Status', render: (_, row) => <StatusBadge code={row.StatusCode} name={row.StatusName} /> }
+  ]
+
+  const handleView = (row) => {
+    navigate(`/visits/${row.VisitID}`)
+  }
+
+  const handleRefresh = () => {
+    loadVisits()
+  }
 
   return (
     <>
       <Topbar
         title="Visits"
-        subtitle={`${filtered.length} visits`}
+        subtitle={`${visits.length} visits total`}
         actions={<>
-          <button className="btn btn-ghost btn-sm" onClick={() => {}}>↻ Refresh</button>
-          <button className="btn btn-primary" onClick={() => navigate('/visits/new')}>+ New Visit</button>
+          <button className="btn btn-primary" onClick={() => navigate('/visits/new')}>+ Plan New Visit</button>
         </>}
       />
       <div className="page-content">
-        <div className="filter-row">
-          <input
-            className="filter-input" placeholder="Search visit no, target..."
-            value={search} onChange={e => setSearch(e.target.value)}
-          />
-          <select className="filter-select" value={status} onChange={e => setStatus(e.target.value)}>
-            <option value="">All Statuses</option>
-            {mockStatuses.map(s => <option key={s.StatusCode} value={s.StatusCode}>{s.StatusName}</option>)}
-          </select>
-          <select className="filter-select" value={type} onChange={e => setType(e.target.value)}>
-            <option value="">All Types</option>
-            {mockTargetTypes.map(t => <option key={t.TargetTypeCode} value={t.TargetTypeName}>{t.TargetTypeName}</option>)}
-          </select>
-        </div>
-
-        <div className="card">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Visit No</th><th>Target</th><th>Governorate / Area</th>
-                <th>Type</th><th>Purpose</th><th>Date</th>
-                <th>Salesperson</th><th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(v => (
-                <tr key={v.VisitID} onClick={() => navigate(`/visits/${v.VisitID}`)}>
-                  <td className="mono">{v.VisitNo}</td>
-                  <td><strong>{v.TargetName}</strong></td>
-                  <td>{v.Governorate} / {v.Area}</td>
-                  <td>{v.TargetTypeName}</td>
-                  <td>{v.PurposeName}</td>
-                  <td>{fmtDate(v.VisitDate)}</td>
-                  <td>{v.SalespersonName}</td>
-                  <td><StatusBadge code={v.StatusCode} name={v.StatusName}/></td>
-                </tr>
-              ))}
-              {filtered.length === 0 && (
-                <tr><td colSpan={8} style={{textAlign:'center', padding:'32px', color:'var(--muted)'}}>No visits found</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        <DataGrid
+          title="Visits"
+          hideHeader={true}
+          columns={columns}
+          rows={visits}
+          onView={handleView}
+          hideToolbarButtons={true}
+          onRefresh={handleRefresh}
+        />
       </div>
     </>
   )
 }
+
+
+

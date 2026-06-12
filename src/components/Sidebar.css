@@ -85,3 +85,31 @@
 }
 .sidebar-user strong { display: block; font-size: 12px; color: #fff; }
 .sidebar-user span   { display: block; font-size: 11px; color: #9ca3af; }
+
+/* Sub-Navigation Styles */
+.sub-nav-list {
+  margin-left: 22px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sub-nav-item {
+  display: block;
+  text-decoration: none;
+  color: #a1a1aa;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: .15s ease;
+}
+.sub-nav-item:hover {
+  color: #fff;
+  background: rgba(255,255,255,.05);
+}
+.sub-nav-item.active {
+  color: #fff;
+  background: rgba(245,130,32,0.18);
+  font-weight: 750;
+}
