@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import Sidebar from './components/Sidebar'
 import Dashboard    from './pages/visits/Dashboard'
 import VisitList    from './pages/visits/VisitList'
@@ -15,7 +15,7 @@ import './App.css'
 
 export default function App() {
   return (
-    <BrowserRouter basename="/GLCVisits">
+    <HashRouter>
       <div className="app-shell">
         <Sidebar/>
         <main className="main">
@@ -28,13 +28,13 @@ export default function App() {
             <Route path="/reports/dashboard" element={<MergedSurveyDashboard/>}/>
             <Route path="/settings"       element={<Settings/>}/>
             <Route path="/settings/users" element={<UserMaster/>}/>
-
             <Route path="/settings/teams" element={<TeamMaster/>}/>
             <Route path="/settings/permissions" element={<UserPermissions/>}/>
             <Route path="/settings/surveys"     element={<SurveyBuilder/>}/>
           </Routes>
         </main>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
+
